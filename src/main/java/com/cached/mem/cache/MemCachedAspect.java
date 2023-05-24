@@ -3,26 +3,23 @@ package com.cached.mem.cache;
 import com.cached.mem.cache.annotations.LocalCacheClear;
 import com.cached.mem.cache.annotations.LocalCacheable;
 import com.cached.mem.cache.annotations.LocalCacheableAll;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import net.spy.memcached.MemcachedClient;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.net.InetSocketAddress;
 
 @Aspect
 @Component
+@AllArgsConstructor
 public class MemCachedAspect {
 
+    @Autowired
     private final MemcachedClient memcachedClient;
-
-    @SneakyThrows
-    public MemCachedAspect() {
-        memcachedClient = new MemcachedClient(new InetSocketAddress("127.0.0.1", 11211));
-    }
 
     @Around("@annotation(localCacheable) && args(id)")
     @SneakyThrows
@@ -41,7 +38,7 @@ public class MemCachedAspect {
     public Object checkAllCache(ProceedingJoinPoint joinPoint, LocalCacheableAll localCacheableAll) {
         String key = localCacheableAll.key();
         Object value = memcachedClient.get(key);
-
+        memcachedClient.flush();
         if (value != null)
             return value;
 
@@ -54,7 +51,6 @@ public class MemCachedAspect {
 
         if (result != null)
             memcachedClient.set(key, 900, result);
-
 
         return result;
     }
