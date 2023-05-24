@@ -1,0 +1,10 @@
+
+version: "3"
+
+services:
+  mymemcached:
+    image: memcached
+    command:
+      - memcached
+    ports:
+      - 11211:11211
