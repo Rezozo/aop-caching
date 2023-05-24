@@ -9,7 +9,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
@@ -24,15 +23,6 @@ public class MemCachedAspect {
     public MemCachedAspect() {
         memcachedClient = new MemcachedClient(new InetSocketAddress("127.0.0.1", 11211));
     }
-
-    @Pointcut("@annotation(target)")
-    public void localCacheable(LocalCacheable target) { }
-
-    @Pointcut("@annotation(target)")
-    public void localCacheableAll(LocalCacheableAll target) { }
-
-    @Pointcut("@annotation(target)")
-    public void localCacheClear(LocalCacheClear target) { }
 
     @Around("@annotation(localCacheable) && args(id)")
     @SneakyThrows
