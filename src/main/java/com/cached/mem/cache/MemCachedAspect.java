@@ -38,7 +38,7 @@ public class MemCachedAspect {
     public Object checkAllCache(ProceedingJoinPoint joinPoint, LocalCacheableAll localCacheableAll) {
         String key = localCacheableAll.key();
         Object value = memcachedClient.get(key);
-        memcachedClient.flush();
+
         if (value != null)
             return value;
 
